@@ -16,6 +16,7 @@ public sealed class SimpleArrayMapper<TEntity, TValue>
 
     public SimpleArrayMapper<TEntity, TValue> AddItem(Func<TEntity, TValue> itemFactory)
     {
+        ArgumentNullException.ThrowIfNull(itemFactory);
         Element.Add(itemFactory);
         return this;
     }
