@@ -5,39 +5,34 @@ namespace AzureTable.Provider.Configuration.Mapping;
 
 public static class ConfigurationMapperValueExtensions
 {
-    public static TMapper WithValue<T, TMapper, TValue>(this TMapper mapper, Expression<Func<T, TValue>> valueExpression, string key)
-        where T : class
-        where TMapper : BaseConfigurationMapper<T>
-        where TValue : struct, IFormattable
-    {
-        ArgumentException.ThrowIfNullOrWhiteSpace(key);
-        var element = ValueElement<T>.CreateFrom(valueExpression, key);
-        mapper.Container.Add(element);
-
-        return mapper;
-    }
-
-    public static TMapper WithValue<T, TMapper, TValue>(this TMapper mapper, Expression<Func<T, TValue?>> valueExpression, string key)
-        where T : class
-        where TMapper : BaseConfigurationMapper<T>
-        where TValue : struct, IFormattable
-    {
-        ArgumentException.ThrowIfNullOrWhiteSpace(key);
-        var element = ValueElement<T>.CreateFrom(valueExpression, key);
-        mapper.Container.Add(element);
-
-        return mapper;
-    }
 
     public static TMapper WithValue<T, TMapper, TValue>(this TMapper mapper, Expression<Func<T, TValue>> valueExpression)
         where T : class
         where TMapper : BaseConfigurationMapper<T>
         where TValue : struct, IFormattable
     {
-        var element = ValueElement<T>.CreateFrom(valueExpression);
-        mapper.Container.Add(element);
+        ArgumentNullException.ThrowIfNull(valueExpression);
+        return mapper.WithValue(ValueElement<T>.CreateFrom(valueExpression));
+    }
 
-        return mapper;
+    public static TMapper WithValue<T, TMapper, TValue>(this TMapper mapper, Expression<Func<T, TValue>> valueExpression, string keyOverride)
+        where T : class
+        where TMapper : BaseConfigurationMapper<T>
+        where TValue : struct, IFormattable
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(keyOverride);
+        ArgumentNullException.ThrowIfNull(valueExpression);
+        return mapper.WithValue(ValueElement<T>.CreateFrom(valueExpression, keyOverride));
+    }
+
+    public static TMapper WithValue<T, TMapper, TValue>(this TMapper mapper, Expression<Func<T, TValue?>> valueExpression, string keyOverride)
+        where T : class
+        where TMapper : BaseConfigurationMapper<T>
+        where TValue : struct, IFormattable
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(keyOverride);
+        ArgumentNullException.ThrowIfNull(valueExpression);
+        return mapper.WithValue(ValueElement<T>.CreateFrom(valueExpression, keyOverride));
     }
 
     public static TMapper WithValue<T, TMapper, TValue>(this TMapper mapper, Expression<Func<T, TValue?>> valueExpression)
@@ -45,30 +40,32 @@ public static class ConfigurationMapperValueExtensions
         where TMapper : BaseConfigurationMapper<T>
         where TValue : struct, IFormattable
     {
-        var element = ValueElement<T>.CreateFrom(valueExpression);
-        mapper.Container.Add(element);
-
-        return mapper;
+        ArgumentNullException.ThrowIfNull(valueExpression);
+        return mapper.WithValue(ValueElement<T>.CreateFrom(valueExpression));
     }
 
-    public static TMapper WithValue<T, TMapper>(this TMapper mapper, Expression<Func<T, string?>> valueExpression, string key)
+    public static TMapper WithValue<T, TMapper>(this TMapper mapper, Expression<Func<T, string?>> valueExpression, string keyOverride)
         where T : class
         where TMapper : BaseConfigurationMapper<T>
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(key);
-        var element = ValueElement<T>.CreateFrom(valueExpression, key);
-        mapper.Container.Add(element);
-
-        return mapper;
+        ArgumentException.ThrowIfNullOrWhiteSpace(keyOverride);
+        ArgumentNullException.ThrowIfNull(valueExpression);
+        return mapper.WithValue(ValueElement<T>.CreateFrom(valueExpression, keyOverride));
     }
 
     public static TMapper WithValue<T, TMapper>(this TMapper mapper, Expression<Func<T, string?>> valueExpression)
         where T : class
         where TMapper : BaseConfigurationMapper<T>
     {
-        var element = ValueElement<T>.CreateFrom(valueExpression);
-        mapper.Container.Add(element);
+        ArgumentNullException.ThrowIfNull(valueExpression);
+        return mapper.WithValue(ValueElement<T>.CreateFrom(valueExpression));
+    }
 
+    private static TMapper WithValue<T, TMapper>(this TMapper mapper, ValueElement<T> element)
+        where T : class
+        where TMapper : BaseConfigurationMapper<T>
+    {
+        mapper.Container.Add(element);
         return mapper;
     }
 }
