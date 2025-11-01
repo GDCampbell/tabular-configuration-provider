@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using AzureTable.Provider.Configuration.Mapping.Elements;
+using System.Linq.Expressions;
 
 namespace AzureTable.Provider.Configuration.Mapping;
 
@@ -9,15 +10,14 @@ public static class ConfigurationMapperArrayExtensions
         where TMapper : BaseConfigurationMapper<T>
         where TValue : struct, IFormattable
     {
+        ArgumentException.ThrowIfNullOrWhiteSpace(name);
         ArgumentNullException.ThrowIfNull(configure);
 
         var arrayMapper = new SimpleArrayMapper<T, TValue>(name);
 
         configure(arrayMapper);
 
-        mapper.Container.Add(arrayMapper.Element);
-
-        return mapper;
+        return mapper.AddPrimitiveArray(arrayMapper.Element);
     }
 
     public static TMapper AddPrimitiveArray<T, TMapper, TValue>(this TMapper mapper, string name, Action<SimpleArrayMapper<T, TValue?>> configure)
@@ -25,15 +25,14 @@ public static class ConfigurationMapperArrayExtensions
         where TMapper : BaseConfigurationMapper<T>
         where TValue : struct, IFormattable
     {
+        ArgumentException.ThrowIfNullOrWhiteSpace(name);
         ArgumentNullException.ThrowIfNull(configure);
 
         var arrayMapper = new SimpleArrayMapper<T, TValue?>(name);
 
         configure(arrayMapper);
 
-        mapper.Container.Add(arrayMapper.Element);
-
-        return mapper;
+        return mapper.AddPrimitiveArray(arrayMapper.Element);
     }
 
     public static TMapper AddPrimitiveArray<T, TMapper, TValue>(this TMapper mapper, Expression<Func<T, string>> nameExpression, Action<SimpleArrayMapper<T, TValue>> configure)
@@ -41,15 +40,14 @@ public static class ConfigurationMapperArrayExtensions
         where TMapper : BaseConfigurationMapper<T>
         where TValue : struct, IFormattable
     {
+        ArgumentNullException.ThrowIfNull(nameExpression);
         ArgumentNullException.ThrowIfNull(configure);
 
         var arrayMapper = new SimpleArrayMapper<T, TValue>(nameExpression);
 
         configure(arrayMapper);
 
-        mapper.Container.Add(arrayMapper.Element);
-
-        return mapper;
+        return mapper.AddPrimitiveArray(arrayMapper.Element);
     }
 
     public static TMapper AddPrimitiveArray<T, TMapper, TValue>(this TMapper mapper, Expression<Func<T, string>> nameExpression, Action<SimpleArrayMapper<T, TValue?>> configure)
@@ -57,73 +55,84 @@ public static class ConfigurationMapperArrayExtensions
         where TMapper : BaseConfigurationMapper<T>
         where TValue : struct, IFormattable
     {
+        ArgumentNullException.ThrowIfNull(nameExpression);
         ArgumentNullException.ThrowIfNull(configure);
 
         var arrayMapper = new SimpleArrayMapper<T, TValue?>(nameExpression);
 
         configure(arrayMapper);
 
-        mapper.Container.Add(arrayMapper.Element);
-
-        return mapper;
+        return mapper.AddPrimitiveArray(arrayMapper.Element);
     }
 
     public static TMapper AddStringArray<T, TMapper>(this TMapper mapper, Expression<Func<T, string>> nameExpression, Action<SimpleArrayMapper<T, string?>> configure)
         where T : class
         where TMapper : BaseConfigurationMapper<T>
     {
+        ArgumentNullException.ThrowIfNull(nameExpression);
         ArgumentNullException.ThrowIfNull(configure);
 
         var arrayMapper = new SimpleArrayMapper<T, string?>(nameExpression);
 
         configure(arrayMapper);
 
-        mapper.Container.Add(arrayMapper.Element);
-
-        return mapper;
+        return mapper.AddPrimitiveArray(arrayMapper.Element);
     }
 
     public static TMapper AddStringArray<T, TMapper>(this TMapper mapper, string name, Action<SimpleArrayMapper<T, string?>> configure)
         where T : class
         where TMapper : BaseConfigurationMapper<T>
     {
+        ArgumentException.ThrowIfNullOrWhiteSpace(name);
         ArgumentNullException.ThrowIfNull(configure);
 
         var arrayMapper = new SimpleArrayMapper<T, string?>(name);
 
         configure(arrayMapper);
 
-        mapper.Container.Add(arrayMapper.Element);
-
-        return mapper;
+        return mapper.AddPrimitiveArray(arrayMapper.Element);
     }
 
     public static TMapper AddComplexArray<T, TMapper>(this TMapper mapper, string name, Action<ComplexArrayMapper<T>> configure)
         where T : class
         where TMapper : BaseConfigurationMapper<T>
     {
+        ArgumentException.ThrowIfNullOrWhiteSpace(name);
         ArgumentNullException.ThrowIfNull(configure);
 
         var objectMapper = new ComplexArrayMapper<T>(name);
 
         configure(objectMapper);
 
-        mapper.Container.Add(objectMapper.Element);
-        return mapper;
+        return mapper.AddComplexArray(objectMapper.Element);
     }
 
     public static TMapper AddComplexArray<T, TMapper>(this TMapper mapper, Expression<Func<T, string>> nameExpression, Action<ComplexArrayMapper<T>> configure)
         where T : class
         where TMapper : BaseConfigurationMapper<T>
     {
+        ArgumentNullException.ThrowIfNull(nameExpression);
         ArgumentNullException.ThrowIfNull(configure);
 
         var objectMapper = new ComplexArrayMapper<T>(nameExpression);
 
         configure(objectMapper);
 
-        mapper.Container.Add(objectMapper.Element);
+        return mapper.AddComplexArray(objectMapper.Element);
+    }
+    private static TMapper AddPrimitiveArray<T, TMapper>(this TMapper mapper, SimpleArrayElement<T> element)
+        where T : class
+        where TMapper : BaseConfigurationMapper<T>
+    {
+        mapper.Container.Add(element);
+        return mapper;
+    }
 
+    private static TMapper AddComplexArray<T, TMapper>(this TMapper mapper, ComplexArrayElement<T> element)
+        where T : class
+        where TMapper : BaseConfigurationMapper<T>
+    {
+        mapper.Container.Add(element);
         return mapper;
     }
 }
