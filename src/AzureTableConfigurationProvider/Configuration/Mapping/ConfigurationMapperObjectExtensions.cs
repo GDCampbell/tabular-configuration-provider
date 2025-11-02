@@ -57,7 +57,7 @@ public static class ConfigurationMapperObjectExtensions
         return mapper;
     }
 
-    private static TMapper AddTypedObject<T, TMapper, TObject>(this TMapper mapper, NamedObjectElement<T> namedObjectElement, Action<TypedObjectMapper<T, TObject>> configure)
+    internal static TMapper AddTypedObject<T, TMapper, TObject>(this TMapper mapper, NamedObjectElement<T> namedObjectElement, Action<TypedObjectMapper<T, TObject>> configure)
         where T : class
         where TMapper : BaseConfigurationMapper<T>
         where TObject : class
