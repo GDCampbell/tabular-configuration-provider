@@ -78,16 +78,13 @@ public sealed class TypedObjectMapper<TEntity, TObject> : BaseConfigurationMappe
         return AddValueElement(ValueElement<TEntity>.CreateFrom(valueFactory, keyExpression.GetMemberName()));
     }
 
-
     public TypedObjectMapper<TEntity, TObject> AddMappedSimplePrimitiveArray<TValue>(Expression<Func<TObject, IEnumerable<TValue>>> keyExpression, Action<SimpleArrayMapper<TEntity, TValue>> configure)
         where TValue : struct, IFormattable
     {
         ArgumentNullException.ThrowIfNull(keyExpression);
         ArgumentNullException.ThrowIfNull(configure);
-        var simplePrimitiveArray = new SimpleArrayMapper<TEntity, TValue>(keyExpression.GetMemberName());
-        configure(simplePrimitiveArray);
-        Container.Add(simplePrimitiveArray.Element);
-        return this;
+
+        return AddMappedSimpleArray(new SimpleArrayMapper<TEntity, TValue>(keyExpression.GetMemberName()), configure);
     }
 
     public TypedObjectMapper<TEntity, TObject> AddMappedSimplePrimitiveArray<TValue>(Expression<Func<TObject, IEnumerable<TValue?>>> keyExpression, Action<SimpleArrayMapper<TEntity, TValue?>> configure)
@@ -95,19 +92,22 @@ public sealed class TypedObjectMapper<TEntity, TObject> : BaseConfigurationMappe
     {
         ArgumentNullException.ThrowIfNull(keyExpression);
         ArgumentNullException.ThrowIfNull(configure);
-        var simplePrimitiveArray = new SimpleArrayMapper<TEntity, TValue?>(keyExpression.GetMemberName());
-        configure(simplePrimitiveArray);
-        Container.Add(simplePrimitiveArray.Element);
-        return this;
+
+        return AddMappedSimpleArray(new SimpleArrayMapper<TEntity, TValue?>(keyExpression.GetMemberName()), configure);
     }
 
     public TypedObjectMapper<TEntity, TObject> AddMappedSimpleStringArray(Expression<Func<TObject, IEnumerable<string?>>> keyExpression, Action<SimpleArrayMapper<TEntity, string?>> configure)
     {
         ArgumentNullException.ThrowIfNull(keyExpression);
         ArgumentNullException.ThrowIfNull(configure);
-        var simplePrimitiveArray = new SimpleArrayMapper<TEntity, string?>(keyExpression.GetMemberName());
-        configure(simplePrimitiveArray);
-        Container.Add(simplePrimitiveArray.Element);
+
+        return AddMappedSimpleArray(new SimpleArrayMapper<TEntity, string?>(keyExpression.GetMemberName()), configure);
+    }
+
+    private TypedObjectMapper<TEntity, TObject> AddMappedSimpleArray<TValue>(SimpleArrayMapper<TEntity, TValue> simpleArrayMapper, Action<SimpleArrayMapper<TEntity, TValue>> configure)
+    {
+        configure(simpleArrayMapper);
+        Container.Add(simpleArrayMapper.Element);
         return this;
     }
 
