@@ -1,5 +1,5 @@
 using Azure.Data.Tables;
-using AzureTable.Provider.Configuration.Mapping.Elements;
+using AzureTable.Provider.Configuration.Elements;
 using AzureTable.Provider.Query;
 using Microsoft.Extensions.Configuration;
 

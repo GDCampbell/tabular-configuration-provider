@@ -1,7 +1,8 @@
-﻿using AzureTable.Provider.Configuration.Mapping.Elements;
+﻿using AzureTable.Provider.Configuration.Elements;
+using AzureTable.Provider.Configuration.Mappers;
 using System.Linq.Expressions;
 
-namespace AzureTable.Provider.Configuration.Mapping;
+namespace AzureTable.Provider.Configuration.Extensions;
 
 public static class ConfigurationMapperObjectExtensions
 {

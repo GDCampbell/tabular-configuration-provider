@@ -1,6 +1,6 @@
 ﻿using System.Text;
 using Azure.Data.Tables;
-using AzureTable.Provider.Configuration.Mapping;
+using AzureTable.Provider.Configuration.Mappers;
 using AzureTable.Provider.Query;
 using Microsoft.Extensions.Configuration;
 

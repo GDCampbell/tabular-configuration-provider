@@ -1,7 +1,8 @@
-﻿using AzureTable.Provider.Configuration.Mapping.Elements;
+﻿using AzureTable.Provider.Configuration.Elements;
+using AzureTable.Provider.Configuration.Mappers;
 using System.Linq.Expressions;
 
-namespace AzureTable.Provider.Configuration.Mapping;
+namespace AzureTable.Provider.Configuration.Extensions;
 
 public static class ConfigurationMapperArrayExtensions
 {
@@ -120,6 +121,37 @@ public static class ConfigurationMapperArrayExtensions
 
         return mapper.AddComplexArray(objectMapper.Element);
     }
+
+    public static TMapper AddTypedComplexArray<T, TMapper, TObject>(this TMapper mapper, string name, Action<TypedComplexArrayMapper<T, TObject>> configure)
+        where T : class
+        where TMapper : BaseConfigurationMapper<T>
+        where TObject : class
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(name);
+        ArgumentNullException.ThrowIfNull(configure);
+
+        var typedArrayMapper = new TypedComplexArrayMapper<T, TObject>(name);
+
+        configure(typedArrayMapper);
+
+        return mapper.AddComplexArray(typedArrayMapper.Element);
+    }
+
+    public static TMapper AddTypedComplexArray<T, TMapper, TObject>(this TMapper mapper, Func<T, string> nameFactory, Action<TypedComplexArrayMapper<T, TObject>> configure)
+        where T : class
+        where TMapper : BaseConfigurationMapper<T>
+        where TObject : class
+    {
+        ArgumentNullException.ThrowIfNull(nameFactory);
+        ArgumentNullException.ThrowIfNull(configure);
+
+        var typedArrayMapper = new TypedComplexArrayMapper<T, TObject>(nameFactory);
+
+        configure(typedArrayMapper);
+
+        return mapper.AddComplexArray(typedArrayMapper.Element);
+    }
+
     private static TMapper AddPrimitiveArray<T, TMapper>(this TMapper mapper, SimpleArrayElement<T> element)
         where T : class
         where TMapper : BaseConfigurationMapper<T>
@@ -135,4 +167,6 @@ public static class ConfigurationMapperArrayExtensions
         mapper.Container.Add(element);
         return mapper;
     }
+
+
 }

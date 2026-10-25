@@ -1,7 +1,7 @@
-﻿using AzureTable.Provider.Configuration.Mapping.Elements;
+﻿using AzureTable.Provider.Configuration.Elements;
 using System.Linq.Expressions;
 
-namespace AzureTable.Provider.Configuration.Mapping;
+namespace AzureTable.Provider.Configuration.Mappers;
 
 public sealed class SimpleArrayMapper<TEntity, TValue>
     where TEntity : class

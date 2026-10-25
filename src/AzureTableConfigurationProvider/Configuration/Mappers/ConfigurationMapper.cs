@@ -1,6 +1,6 @@
-﻿using AzureTable.Provider.Configuration.Mapping.Elements;
+﻿using AzureTable.Provider.Configuration.Elements;
 
-namespace AzureTable.Provider.Configuration.Mapping;
+namespace AzureTable.Provider.Configuration.Mappers;
 
 public abstract class BaseConfigurationMapper<TEntity> where TEntity : class
 {

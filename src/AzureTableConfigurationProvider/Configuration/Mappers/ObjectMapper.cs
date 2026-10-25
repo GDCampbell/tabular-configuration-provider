@@ -1,8 +1,9 @@
-﻿using AzureTable.Provider.Configuration.Mapping.Elements;
+﻿using AzureTable.Provider.Configuration.Elements;
+using AzureTable.Provider.Configuration.Extensions;
 using AzureTable.Provider.Extensions;
 using System.Linq.Expressions;
 
-namespace AzureTable.Provider.Configuration.Mapping;
+namespace AzureTable.Provider.Configuration.Mappers;
 
 public sealed class ObjectMapper<TEntity> : BaseConfigurationMapper<TEntity> where TEntity : class
 {
@@ -22,12 +23,12 @@ public sealed class TypedObjectMapper<TEntity, TObject> : BaseConfigurationMappe
     where TEntity : class
     where TObject : class
 {
-    internal IElement<TEntity> Element { get; }
+    internal ObjectElement<TEntity> Element { get; }
 
-    internal TypedObjectMapper(NamedObjectElement<TEntity> namedObjectElement) : base(namedObjectElement)
-    {
-        Element = namedObjectElement;
-    }
+    //internal TypedObjectMapper(NamedObjectElement<TEntity> namedObjectElement) : base(namedObjectElement)
+    //{
+    //    Element = namedObjectElement;
+    //}
 
     internal TypedObjectMapper(ObjectElement<TEntity> objectElement) : base(objectElement)
     {
@@ -116,6 +117,7 @@ public sealed class TypedObjectMapper<TEntity, TObject> : BaseConfigurationMappe
     {
         ArgumentNullException.ThrowIfNull(keyExpression);
         ArgumentNullException.ThrowIfNull(configure);
+
 
         var complexTypedArray = new TypedComplexArrayMapper<TEntity, TValue>(keyExpression.GetMemberName());
 

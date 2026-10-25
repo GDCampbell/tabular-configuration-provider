@@ -1,7 +1,7 @@
 ﻿using AzureTable.Provider.Extensions;
 using System.Linq.Expressions;
 
-namespace AzureTable.Provider.Configuration.Mapping.Elements;
+namespace AzureTable.Provider.Configuration.Elements;
 
 // Generic constraint on interface ensures type consistency in
 // implementations so warning has been suppressed.
@@ -39,22 +39,22 @@ internal sealed class RootElement<T> : ContainerElement<T>, IElement<T> where T 
 
 internal sealed class ObjectElement<T> : ContainerElement<T> where T : class;
 
-internal sealed class NamedObjectElement<T> : KeyedElement<T> where T : class
-{
-    private readonly ObjectElement<T> _objectElement = new();
-    public NamedObjectElement(string staticName) : base(staticName)
-    {
-    }
+//internal sealed class NamedObjectElement<T> : KeyedElement<T> where T : class
+//{
+//    private readonly ObjectElement<T> _objectElement = new();
+//    public NamedObjectElement(string staticName) : base(staticName)
+//    {
+//    }
 
-    public NamedObjectElement(Expression<Func<T, string>> expression) : base(expression)
-    {
-    }
+//    public NamedObjectElement(Expression<Func<T, string>> expression) : base(expression)
+//    {
+//    }
 
-    public ObjectElement<T> AsObjectElement() => _objectElement;
+//    public ObjectElement<T> AsObjectElement() => _objectElement;
 
-    public static implicit operator ObjectElement<T>(NamedObjectElement<T> element)
-        => element.AsObjectElement();
-}
+//    public static implicit operator ObjectElement<T>(NamedObjectElement<T> element)
+//        => element.AsObjectElement();
+//}
 
 internal sealed class ComplexArrayContainer<T> : ContainerElement<T> where T : class
 {
@@ -83,37 +83,41 @@ internal abstract class KeyedElement<T> : IKeyedElement<T> where T : class
 internal sealed class ElementKey<T> where T : class
 {
     private readonly Func<T, string> _keyFactory;
-    public string Name { get; }
     public string ExtractKey(T instance)
         => _keyFactory(instance);
 
-    private ElementKey(Func<T, string> keyFactory, string name)
-        => (_keyFactory, Name) = (keyFactory, name);
+    private ElementKey(Func<T, string> keyFactory)
+        => _keyFactory = keyFactory;
 
     public static ElementKey<T> FromStaticKey(string key)
     {
         key = key?.Trim() ?? string.Empty;
         ArgumentException.ThrowIfNullOrEmpty(key);
 
-        return new(_ => key, $"From static: {key}");
+        return new(_ => key);
     }
 
     public static ElementKey<T> FromMemberExpression(Expression<Func<T, string>> expression)
     {
         ArgumentNullException.ThrowIfNull(expression);
 
-        var name = $"From member expression: {expression.GetMemberName()}";
+        return new(_ => expression.GetMemberName());
+    }
 
-        var compiled = expression.Compile();
+    public static ElementKey<T> FromFactory(Func<T, string> factory)
+    {
+        ArgumentNullException.ThrowIfNull(factory);
+
         string KeyFactory(T instance)
         {
-            var key = compiled(instance)?.Trim();
+            var key = factory(instance)?.Trim();
+
             return !string.IsNullOrWhiteSpace(key)
                 ? key
-                : throw new InvalidOperationException($"Value extracted for {expression.GetMemberName()} cannot be null, empty or whitespace when used as a section key.");
+                : throw new InvalidOperationException("Value extracted for a key cannot be null, empty or whitespace");
         }
 
-        return new(KeyFactory, name);
+        return new(KeyFactory);
     }
 }
 
@@ -165,14 +169,23 @@ internal sealed class ValueElement<T> : KeyedElement<T> where T : class
         return new(name, LeafValue<T>.Create(valueFactory));
     }
 
-    public static ValueElement<T> CreateFrom<TValue>(Expression<Func<T, TValue>> expression, string? nameOverride = null)
+    public static ValueElement<T> CreateFrom<TValue>(Expression<Func<T, TValue>> expression)
     {
         ArgumentNullException.ThrowIfNull(expression);
 
-        var name = !string.IsNullOrWhiteSpace(nameOverride) ? nameOverride : expression.GetMemberName();
+        var name = expression.GetMemberName();
         return new(name, LeafValue<T>.Create(expression.Compile()));
     }
+
+    public static ValueElement<T> CreateFrom<TValue>(string name, TValue value)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(name);
+
+        return new(name, LeafValue<T>.Create(_ => value));
+    }
 }
+
+internal sealed class
 
 internal sealed class SimpleArrayElement<T> : KeyedElement<T> where T : class
 {

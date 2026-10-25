@@ -1,4 +1,4 @@
-﻿namespace AzureTable.Provider.Configuration.Mapping.Elements;
+﻿namespace AzureTable.Provider.Configuration.Elements;
 
 internal sealed class SectionPath
 {
