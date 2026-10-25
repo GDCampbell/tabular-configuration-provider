@@ -1,4 +1,4 @@
-﻿namespace AzureTable.Provider.Configuration.Mapping.Elements;
+﻿namespace AzureTable.Provider.Configuration.Elements;
 
 internal sealed class SectionPath
 {
@@ -14,7 +14,11 @@ internal sealed class SectionPath
         segment = segment?.Trim() ?? string.Empty;
         ArgumentException.ThrowIfNullOrWhiteSpace(segment);
 
-        return new(string.IsNullOrWhiteSpace(Path) ? segment : $"{Path}:{segment}");
+        return new(string.IsNullOrWhiteSpace(Path)
+            ? segment
+            : $"{Path}:{segment}");
     }
 
+    public static implicit operator string(SectionPath sectionPath) => sectionPath.Path;
+    public static SectionPath operator +(SectionPath left, string right) => left.AddSegment(right);
 }
